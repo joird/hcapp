@@ -1,0 +1,133 @@
+.header-login {
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+  background: #c6ff29;
+  background: -moz-linear-gradient(left, #c6ff29 0%, #7fe421 52%, #c6ff29 100%);
+  background: -webkit-gradient( left top, right top, color-stop(0%, #c6ff29), color-stop(52%, #7fe421), color-stop(100%, #c6ff29));
+  background: -webkit-linear-gradient( left, #c6ff29 0%, #7fe421 52%, #c6ff29 100%);
+  background: -o-linear-gradient(left, #c6ff29 0%, #7fe421 52%, #c6ff29 100%);
+  background: -ms-linear-gradient(left, #c6ff29 0%, #7fe421 52%, #c6ff29 100%);
+  background: linear-gradient(to right, #c6ff29 0%, #7fe421 52%, #c6ff29 100%);
+  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#c6ff29', endColorstr='#c6ff29', GradientType=1);
+}
+
+.form-contenedor {
+  top: -100px;
+  position:relative;
+  max-height: 650px;
+  min-height: 400px;
+  border-radius: 0.25rem;
+  background: white;
+  -webkit-box-shadow: 0px 0px 3px 1px rgba(180, 180, 180, 1);
+  -moz-box-shadow: 0px 0px 3px 1px rgba(180, 180, 180, 1);
+  box-shadow: 0px 0px 3px 1px rgba(180, 180, 180, 1);
+}
+
+.form-login {
+  max-width: 600px;
+  min-width: 400px;
+  background:white;
+}
+
+label {
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.input-login {
+  font-weight: 400;
+  height: 35px;
+  border: 1.5px solid;
+  border-color: #cccccc;
+  border-radius: 0.25rem;
+  background: #f2f2f2;
+}
+
+.input-login:focus {
+  outline: none;
+  border-color: #7fe421;
+}
+
+.ojo {
+  border: none;
+  outline: none;
+  margin-left: -35px;
+  position: relative;
+  cursor:pointer;
+  height: 35px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='25' viewBox='0 0 24 24'%3E%3Cpath d='M12.015 7c4.751 0 8.063 3.012 9.504 4.636-1.401 1.837-4.713 5.364-9.504 5.364-4.42 0-7.93-3.536-9.478-5.407 1.493-1.647 4.817-4.593 9.478-4.593zm0-2c-7.569 0-12.015 6.551-12.015 6.551s4.835 7.449 12.015 7.449c7.733 0 11.985-7.449 11.985-7.449s-4.291-6.551-11.985-6.551zm-.015 3c-2.21 0-4 1.791-4 4s1.79 4 4 4c2.209 0 4-1.791 4-4s-1.791-4-4-4zm-.004 3.999c-.564.564-1.479.564-2.044 0s-.565-1.48 0-2.044c.564-.564 1.479-.564 2.044 0s.565 1.479 0 2.044z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.ojo:focus {
+  outline: none;
+}
+
+.ojo:active {
+  position: relative;
+  border-color: #7fe421;
+  top: 0.5px;
+}
+
+.error-mensaje {
+  color: red;
+  font-size: 12px;
+  font-weight: 500;
+  color: red;
+  outline: none;
+  border: none;
+  background: none;
+  height: 20px;
+}
+
+.boton-login {
+  margin: 0;
+  text-shadow: 1px 2px 2px rgba(125, 125, 125, 0.5);
+  font-weight: 500;
+  color: white;
+  border: 1px solid;
+  border-color: #bbbbbb;
+  background: #7fe421;
+  -webkit-box-shadow: 0px 0px 3px 1px rgba(180, 180, 180, 1);
+  -moz-box-shadow: 0px 0px 3px 1px rgba(180, 180, 180, 1);
+  box-shadow: 0px 0px 3px 1px rgba(180, 180, 180, 1);
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.boton-login:hover {
+  color: white;
+  background: #a6ff29;
+}
+
+.boton-login:focus {
+  outline: 0;
+}
+
+.boton-login:active {
+  outline: 0;
+  top: 2px;
+  -webkit-box-shadow: 0px 0px 3px 1px rgba(180, 180, 180, 1);
+  -moz-box-shadow: 0px 0px 3px 1px rgba(180, 180, 180, 1);
+  box-shadow: 0px 0px 3px 1px rgba(180, 180, 180, 1);
+}
+
+.imagen-password {
+  top:-2px;
+  height: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='25' viewBox='0 0 24 24'%3E%3Cpath d='M10 16c0-1.104.896-2 2-2s2 .896 2 2c0 .738-.404 1.376-1 1.723v2.277h-2v-2.277c-.596-.347-1-.985-1-1.723zm11-6v14h-18v-14h3v-4c0-3.313 2.687-6 6-6s6 2.687 6 6v4h3zm-13 0h8v-4c0-2.206-1.795-4-4-4s-4 1.794-4 4v4zm11 2h-14v10h14v-10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.imagen-usuario {
+  top:-2px;
+  height: 24px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath d='M12 2c2.757 0 5 2.243 5 5.001 0 2.756-2.243 5-5 5s-5-2.244-5-5c0-2.758 2.243-5.001 5-5.001zm0-2c-3.866 0-7 3.134-7 7.001 0 3.865 3.134 7 7 7s7-3.135 7-7c0-3.867-3.134-7.001-7-7.001zm6.369 13.353c-.497.498-1.057.931-1.658 1.302 2.872 1.874 4.378 5.083 4.972 7.346h-19.387c.572-2.29 2.058-5.503 4.973-7.358-.603-.374-1.162-.811-1.658-1.312-4.258 3.072-5.611 8.506-5.611 10.669h24c0-2.142-1.44-7.557-5.631-10.647z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}

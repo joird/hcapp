@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
 import UsuarioRegistrar from '../component/forms/UsuarioRegistrar';
-=======
-import { Link } from "react-router-dom";
-import RolRegistrar from '../component/forms/RolRegistrar';
->>>>>>> master
 
 export default function Registro(props) {
   const [user, setUser] = useState();
@@ -32,12 +27,6 @@ export default function Registro(props) {
   };
 
   return (
-<<<<<<< HEAD
     <UsuarioRegistrar />
-=======
-    <>
-      <RolRegistrar />
-    </>
->>>>>>> master
   )
 }

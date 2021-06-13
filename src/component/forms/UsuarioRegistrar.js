@@ -52,8 +52,6 @@ export default function UsuarioRegistrar({ setUpdate }) {
   const [actualizar, setActualizar] = useState(true);
   const [passShow, setPassShow] = useState(false);
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(data);

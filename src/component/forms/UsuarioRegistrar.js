@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { makeStyles, IconButton, InputAdornment, Typography, Grid, Card, Avatar, Button, CssBaseline, TextField } from '@material-ui/core';
-import { Calendar, CardChecklist, Lock, Envelope, Person, CardHeading, CardText } from 'react-bootstrap-icons';
+import { CardChecklist, Envelope, Person, CardHeading, CardText } from 'react-bootstrap-icons';
 import { AccountBox, Visibility, VisibilityOff } from '@material-ui/icons';
-/* import DatePicker from '@material-ui/lab/DatePicker'; */
-
+import axios from 'axios';
 const useStyles = makeStyles((theme) => ({
   avatar: {
     margin: theme.spacing(1),
@@ -34,12 +33,24 @@ const useStyles = makeStyles((theme) => ({
   passButton: {
     position: 'relative',
     right: '-10px',
-  }
+  },
+  rojo: {
+    color: '#e53935',
+  },
+  textInput: {
+    margin: theme.spacing(1, 0, 1, 0),
+  },
+  textInput2: {
+    margin: theme.spacing(0, 0, 0, 0),
+  },
 }));
 
 export default function UsuarioRegistrar({ setUpdate }) {
+  const fecha = new Date();
+  const fechaMin = (fecha.getFullYear() - 80) + "-01-01";
+  const fechaMax = (fecha.getFullYear() - 1) + "-01-01";
   const [data, setData] = useState({
-    nombre: '', apellido: '', usuario: '', email: '', pass: '', dni: '', fechaNacimiento: new Date('2014-08-18T21:11:54')
+    nombre: '', apellido: '', usuario: '', email: '', pass: '', dni: '', fechaNacimiento: ''
   });
   const [isError, setError] = useState({
     nombre: false, apellido: false, usuario: false, email: false, pass: false, dni: false, fechaNacimiento: false
@@ -49,37 +60,27 @@ export default function UsuarioRegistrar({ setUpdate }) {
   });
   const [formError, setFormError] = useState('');
   const classes = useStyles();
-  const [actualizar, setActualizar] = useState(true);
+  /* const [actualizar, setActualizar] = useState(true); */
   const [passShow, setPassShow] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(data);
-    /*     setFormError('');
-        const datos = { rol: data.rol.trim(), descripcion: data.descripcion.trim() };
-        if (validar()) {
-          await fetch('http://localhost:4000/api/v1/rol',
-            {
-              method: 'POST',
-              body: JSON.stringify(datos),
-              headers: {
-                "Content-type": "application/json"
-              }
-            })
-            .then(async response => {
-              if (response.ok) {
-                setUpdate(actualizar);
-                setActualizar(actualizar => !actualizar);
-                setData(data => ({ ...data, rol: '', descripcion: '' }));
-                console.log(await response.json());
-              } else {
-                setFormError('Rol registrado anteriormente.');
-              }
-            })
-            .catch(err => { setFormError('No se ha enviado los datos.'); });
+    if (validar()) {
+      setFormError('');
+      await axios.post("http://localhost:4000/api/v1/usuario", data)
+      .then(res => {
+        if(res.ok){
+          console.log(res)
+          setData(data => ({ ...data, nombre: '', apellido: '', usuario: '', email: '', pass: '', dni: '', fechaNacimiento: ''}));
         } else {
-          setFormError('Verifique los errores.');
-        } */
+          console.log(res)
+        }
+      })
+      .catch(err => console.log(err+'error'));
+    } else {
+      setFormError('Revise los errores');
+    }
   }
 
   const validar = () => {
@@ -149,17 +150,45 @@ export default function UsuarioRegistrar({ setUpdate }) {
       errores++;
     }
 
-    if (fechaNacimiento) {
+    if (fechaNacimiento.length === 0) {
       setError(isError => ({ ...isError, fechaNacimiento: true }));
       setTextError(textError => ({ ...textError, fechaNacimiento: 'Fecha es obligatoria.' }));
+      errores++;
+    } else if (validarEdad(new Date(fechaNacimiento), fecha)) {
+      setError(isError => ({ ...isError, fechaNacimiento: true }));
+      setTextError(textError => ({ ...textError, fechaNacimiento: 'Debe ser mayor a 18 años.' }));
       errores++;
     }
     return errores === 0;
   }
 
+  const validarEdad = (nacimiento, fecha) => {
+    if ((fecha.getFullYear() - nacimiento.getFullYear()) < 18) {
+      return true;
+    } else {
+      if (fecha.getMonth() < nacimiento.getMonth()) {
+        return true;
+      } else if (fecha.getMonth() === nacimiento.getMonth()) {
+        if (fecha.getDate() <= nacimiento.getDate()) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   const handleChange = ({ target }) => {
     setData(data => ({ ...data, [target.name]: target.value.replace(/\s\s+/g, ' ') }));
-    //console.log(target.name + ' : ' + target.value);
+    /* console.log(target.name + ' : ' + target.value); */
+
+  }
+
+  const handleChangeFecha = ({ target }) => {
+
+    if (target.value.length <= 10 && new Date(target.value).getFullYear() <= fecha.getFullYear()) {
+      setData(data => ({ ...data, [target.name]: target.value }));
+    }
+
   }
 
   return (
@@ -169,7 +198,7 @@ export default function UsuarioRegistrar({ setUpdate }) {
           <CssBaseline />
           <Grid container direction="row" justify="center" alignItems="center">
             <Typography component="h1" variant="h5">
-              Registrar Rol
+              Registrate
             </Typography>
             <Avatar className={classes.avatar}>
               <AccountBox />
@@ -177,48 +206,62 @@ export default function UsuarioRegistrar({ setUpdate }) {
           </Grid>
           <form onSubmit={handleSubmit} className={classes.form} noValidate>
             <Grid container justify="center" alignItems="center" spacing={1}>
-              <Grid item xs={1} container justify="flex-end" alignItems="center">
-                <CardHeading className={classes.iconsForm} />
-              </Grid>
-              <Grid item xs={5}>
+              <Grid item xs={6}>
                 <TextField value={data.nombre} onChange={handleChange} helperText={textError.nombre}
-                  error={isError.nombre} variant="outlined" margin="normal" id="nombre"
-                  label="Nombre" name="Nombre" autoComplete="nombre" size='small' fullWidth />
+                  error={isError.nombre} variant="outlined" margin="normal" id="nombre" label="Nombre"
+                  name="nombre" autoComplete="nombre" size='small' fullWidth
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <CardHeading className={isError.nombre ? classes.rojo : null} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
               </Grid>
-              <Grid item xs={1} container justify="flex-end" alignItems="center">
-                <CardText className={classes.iconsForm} />
-              </Grid>
-              <Grid item xs={5}>
+              <Grid item xs={6} >
                 <TextField value={data.apellido} onChange={handleChange} helperText={textError.apellido}
-                  error={isError.apellido} variant="outlined" margin="normal" id="apellido"
-                  label="Apellido" name="apellido" autoComplete="apellido" size='small' fullWidth />
+                  error={isError.apellido} variant="outlined" margin="normal" id="apellido" label="Apellido"
+                  name="apellido" autoComplete="apellido" size='small' fullWidth
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <CardText className={isError.apellido ? classes.rojo : null} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
               </Grid>
-            </Grid>
-
-            <Grid container justify="center" alignItems="center" spacing={1}>
-              <Grid item xs={1} container justify="flex-end" alignItems="center">
-                <Person className={classes.iconsForm} />
+              <Grid item xs={12}>
+                <TextField value={data.usuario} onChange={handleChange} helperText={textError.usuario}
+                  error={isError.usuario} variant="outlined" margin="normal" id="usuario" label="Usuario"
+                  name="usuario" autoComplete="usuario" size='small' fullWidth
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Person className={isError.usuario ? classes.rojo : null} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
               </Grid>
-              <Grid item xs={11}>
-                <TextField item value={data.usuario} onChange={handleChange} helperText={textError.usuario}
-                  error={isError.usuario} variant="outlined" margin="normal" id="usuario"
-                  label="Usuario" name="usuario" autoComplete="usuario" size='small' fullWidth />
-              </Grid>
-              <Grid item xs={1} container justify="flex-end" alignItems="center">
-                <Envelope className={classes.iconsForm} />
-              </Grid>
-              <Grid item xs={11}>
+              <Grid item xs={12}>
                 <TextField value={data.email} onChange={handleChange} helperText={textError.email}
                   error={isError.email} type="email" variant="outlined" margin="normal" id="email"
-                  label="Correo" name="email" autoComplete="email" size='small' fullWidth />
+                  label="Correo" name="email" autoComplete="email" size='small' fullWidth
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <Envelope className={isError.email ? classes.rojo : null} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
               </Grid>
-              <Grid item xs={1} container justify="flex-end" alignItems="center">
-                <Lock className={classes.iconsForm} />
-              </Grid>
-              <Grid item xs={11}>
+              <Grid item xs={12}>
                 <TextField value={data.pass} onChange={handleChange} helperText={textError.pass}
-                  error={isError.pass} type={passShow ? "text" : "password"} variant="outlined" margin="normal" id="pass"
-                  label="Contraseña" name="pass" autoComplete="pass" size='small' fullWidth
+                  error={isError.pass} type={passShow ? "text" : "password"} variant="outlined"
+                  margin="normal" id="pass" label="Contraseña" name="pass" autoComplete="pass" size='small' fullWidth
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -228,42 +271,38 @@ export default function UsuarioRegistrar({ setUpdate }) {
                       </InputAdornment>
                     )
                   }}
-                />
+                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
               </Grid>
-            </Grid>
-
-            <Grid container justify="center" alignItems="center" spacing={1}>
-              <Grid item xs={1} container justify="flex-end" alignItems="center">
-                <CardChecklist className={classes.iconsForm} />
-              </Grid>
-              <Grid item xs={5}>
+              <Grid item xs={6}>
                 <TextField value={data.dni} onChange={handleChange} helperText={textError.dni}
                   error={isError.dni} variant="outlined" margin="normal" id="dni"
-                  label="DNI" name="dni" autoComplete="dni" size='small' fullWidth />
+                  label="DNI" name="dni" autoComplete="dni" size='small' fullWidth
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <CardChecklist className={isError.dni ? classes.rojo : null} />
+                      </InputAdornment>
+                    ),
+                  }}
+                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
               </Grid>
-              <Grid item xs={1} container justify="flex-end" alignItems="center">
-                <Calendar className={classes.iconsForm} />
+              <Grid item xs={6}>
+                <TextField InputProps={{ inputProps: { min: fechaMin, max: fechaMax, className: isError.fechaNacimiento ? classes.rojo : null } }} InputLabelProps={{ shrink: true }}
+                  format="dd/MM/yyyy" onChange={handleChangeFecha} helperText={textError.fechaNacimiento}
+                  error={isError.fechaNacimiento} type="date" variant="outlined" margin="normal"
+                  id="fechaNacimiento" label="Fecha de Nacimiento" name="fechaNacimiento"
+                  autoComplete="fechaNacimiento" size='small' fullWidth 
+                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
               </Grid>
-              <Grid item xs={5}>
-               {/*  <DatePicker views={['day']} label="Fecha de Nacimiento" value={data.fechaNacimiento}
-                  onChange={valor => setData(valor)} renderInput={(params) => <TextField {...params} helperText={null} />}
-                /> */}
-
+              <Grid container direction="column" justify="center" alignItems="center">
+                <Typography className={classes.textError}>{formError}</Typography>
+                <Button type="submit" width="75%" variant="contained" color="primary" className={classes.submit}>Registrar</Button>
               </Grid>
             </Grid>
-
-            <Grid container direction="column" justify="center" alignItems="center">
-              <Typography className={classes.textError}>{formError}</Typography>
-              <Button type="submit" width="75%" variant="contained" color="primary" className={classes.submit}>Registrar</Button>
-            </Grid>
-
           </form>
         </Card>
       </Grid>
     </Grid>
+
   );
 }
-
-/* <TextField InputLabelProps={{ shrink: true }} format="dd/MM/yyyy" value={data.fechaNacimiento} onChange={handleChange} helperText={textError.fechaNacimiento}
-                  error={isError.fechaNacimiento} type="date" variant="outlined" margin="normal" id="fechaNacimiento"
-                  label="Fecha de Nacimiento" name="fechaNacimiento" autoComplete="fechaNacimiento" size='small' fullWidth /> */

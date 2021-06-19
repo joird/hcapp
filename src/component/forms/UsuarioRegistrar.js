@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles, IconButton, InputAdornment, Typography, Grid, Card, Avatar, Button, CssBaseline, TextField } from '@material-ui/core';
 import { CardChecklist, Envelope, Person, CardHeading, CardText } from 'react-bootstrap-icons';
 import { AccountBox, Visibility, VisibilityOff } from '@material-ui/icons';
-import axios from 'axios';
+
 const useStyles = makeStyles((theme) => ({
   avatar: {
     margin: theme.spacing(1),
@@ -62,26 +62,43 @@ export default function UsuarioRegistrar({ setUpdate }) {
   const classes = useStyles();
   /* const [actualizar, setActualizar] = useState(true); */
   const [passShow, setPassShow] = useState(false);
+  const validEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(data);
+    e.preventDefault();    
+    const datos = {
+      nombre: data.nombre.trim(),
+      apellido: data.apellido.trim(),
+      usuario: data.usuario.trim(),
+      email: data.email.trim(),
+      pass: data.pass.trim(),
+      dni: data.dni.trim(),
+      fechaNacimiento: new Date(data.fechaNacimiento)
+    };    
     if (validar()) {
-      setFormError('');
-      await axios.post("http://localhost:4000/api/v1/usuario", data)
-      .then(res => {
-        if(res.ok){
-          console.log(res)
-          setData(data => ({ ...data, nombre: '', apellido: '', usuario: '', email: '', pass: '', dni: '', fechaNacimiento: ''}));
-        } else {
-          console.log(res)
-        }
-      })
-      .catch(err => console.log(err+'error'));
+      await fetch('http://localhost:4000/api/v1/usuario',
+        {
+          method: 'POST',
+          body: JSON.stringify(datos),
+          headers: {
+            "Content-type": "application/json"
+          }
+        })
+        .then(async response => {
+          if (response.ok) {
+            setData(data => ({ ...data, nombre: '', apellido: '', usuario: '', email: '', pass: '', dni: '', fechaNacimiento: '' }));
+            console.log(await response.json());
+          } else {
+            vereficar(await response.json());
+            setFormError('Verifique los errores.');
+          }
+        })
+        .catch(err => { setFormError('No se ha enviado los datos.'); });
     } else {
-      setFormError('Revise los errores');
+      setFormError('Verifique los errores.');
     }
   }
+
 
   const validar = () => {
     let { nombre, apellido, usuario, email, pass, dni, fechaNacimiento } = data;
@@ -126,8 +143,10 @@ export default function UsuarioRegistrar({ setUpdate }) {
       setError(isError => ({ ...isError, email: true }));
       setTextError(textError => ({ ...textError, email: 'Email muy corto.' }));
       errores++;
-    } else if (email) {
-
+    } else if (!validEmail.test(email)) {
+      setError(isError => ({ ...isError, email: true }));
+      setTextError(textError => ({ ...textError, email: 'Email invalido.' }));
+      errores++;
     }
 
     if (pass.length === 0) {
@@ -149,12 +168,17 @@ export default function UsuarioRegistrar({ setUpdate }) {
       setTextError(textError => ({ ...textError, dni: 'Contraseña 8 caracteres al menos.' }));
       errores++;
     }
-
+    let d = fechaNacimiento.split('-');
+    let nacimiento = new Date(d[0],d[1]-1,d[2]);
     if (fechaNacimiento.length === 0) {
       setError(isError => ({ ...isError, fechaNacimiento: true }));
       setTextError(textError => ({ ...textError, fechaNacimiento: 'Fecha es obligatoria.' }));
       errores++;
-    } else if (validarEdad(new Date(fechaNacimiento), fecha)) {
+    } else if (nacimiento.getFullYear() < (fecha.getFullYear()-80)) {
+      setError(isError => ({ ...isError, fechaNacimiento: true }));
+      setTextError(textError => ({ ...textError, fechaNacimiento: 'Debe ser menor a 80 años.' }));
+      errores++;
+    } else if (validarEdad(nacimiento)) {
       setError(isError => ({ ...isError, fechaNacimiento: true }));
       setTextError(textError => ({ ...textError, fechaNacimiento: 'Debe ser mayor a 18 años.' }));
       errores++;
@@ -162,14 +186,15 @@ export default function UsuarioRegistrar({ setUpdate }) {
     return errores === 0;
   }
 
-  const validarEdad = (nacimiento, fecha) => {
-    if ((fecha.getFullYear() - nacimiento.getFullYear()) < 18) {
+  const validarEdad = (nacimiento) => {    
+    let ahora = new Date();   
+    if ((ahora.getFullYear() - nacimiento.getFullYear()) < 18) {
       return true;
     } else {
-      if (fecha.getMonth() < nacimiento.getMonth()) {
+      if (ahora.getMonth() < nacimiento.getMonth()) {
         return true;
-      } else if (fecha.getMonth() === nacimiento.getMonth()) {
-        if (fecha.getDate() <= nacimiento.getDate()) {
+      } else if (ahora.getMonth() === nacimiento.getMonth()) {        
+        if (ahora.getDate() <= nacimiento.getDate()) {
           return true;
         }
       }
@@ -177,18 +202,33 @@ export default function UsuarioRegistrar({ setUpdate }) {
     return false;
   }
 
+  const vereficar = ({ message }) => {
+    console.log(message)
+    if (message.includes('usuario:')) {
+      setError(isError => ({ ...isError, usuario: true }));
+      setTextError(textError => ({ ...textError, usuario: 'Usuario ya usado.' }));
+    }
+    if (message.includes('email:')) {
+      setError(isError => ({ ...isError, email: true }));
+      setTextError(textError => ({ ...textError, email: 'Email ya esta ocupado.' }));
+    }
+    if (message.includes('dni:')) {
+      setError(isError => ({ ...isError, dni: true }));
+      setTextError(textError => ({ ...textError, dni: 'DNI ya registrado.' }));
+    }
+  }
+
   const handleChange = ({ target }) => {
     setData(data => ({ ...data, [target.name]: target.value.replace(/\s\s+/g, ' ') }));
-    /* console.log(target.name + ' : ' + target.value); */
+    //console.log(target.name + ' : ' + target.value);
 
   }
 
   const handleChangeFecha = ({ target }) => {
-
     if (target.value.length <= 10 && new Date(target.value).getFullYear() <= fecha.getFullYear()) {
+      //console.log(target.value);
       setData(data => ({ ...data, [target.name]: target.value }));
     }
-
   }
 
   return (
@@ -291,7 +331,7 @@ export default function UsuarioRegistrar({ setUpdate }) {
                   format="dd/MM/yyyy" onChange={handleChangeFecha} helperText={textError.fechaNacimiento}
                   error={isError.fechaNacimiento} type="date" variant="outlined" margin="normal"
                   id="fechaNacimiento" label="Fecha de Nacimiento" name="fechaNacimiento"
-                  autoComplete="fechaNacimiento" size='small' fullWidth 
+                  autoComplete="fechaNacimiento" size='small' fullWidth
                   className={isError.nombre ? classes.textInput2 : classes.textInput} />
               </Grid>
               <Grid container direction="column" justify="center" alignItems="center">
@@ -303,6 +343,5 @@ export default function UsuarioRegistrar({ setUpdate }) {
         </Card>
       </Grid>
     </Grid>
-
   );
 }

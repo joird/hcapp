@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Registro from './view/Registro';
+import Rol from './view/Rol';
 
 ReactDOM.render(
   <BrowserRouter>

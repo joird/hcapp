@@ -59,6 +59,7 @@ export default function RolRegistrar({ setUpdate }) {
             setData(data => ({ ...data, rol: '', descripcion: '' }));
             console.log(await response.json());
           } else {
+            console.log(await response.json());
             setFormError('Rol registrado anteriormente.');
           }
         })

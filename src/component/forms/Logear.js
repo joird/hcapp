@@ -24,24 +24,34 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     right: '-10px',
   },
+  textInput: {
+    margin: theme.spacing(1, 0, 1, 0),
+  },
+  textInput2: {
+    margin: theme.spacing(0, 0, 0, 0),
+  },
 }));
 
 export default function Logear() {
   const classes = useStyles();
   const [data, setData] = useState({
-    nombre: '', apellido: '', usuario: '', email: '', pass: '', dni: '', fechaNacimiento: ''
+    userOrEmail: '', pass: ''
   });
   const [isError, setError] = useState({
-    nombre: false, apellido: false, usuario: false, email: false, pass: false, dni: false, fechaNacimiento: false
+    userOrEmail: false, pass: false
   });
   const [textError, setTextError] = useState({
-    nombre: '', apellido: '', usuario: '', email: '', pass: '', dni: '', fechaNacimiento: ''
+    userOrEmail: '', pass: ''
   });
   const [passShow, setPassShow] = useState(false);
 
   const handleChange = ({ target }) => {
     setData(data => ({ ...data, [target.name]: target.value.replace(/\s\s+/g, ' ') }));
     //console.log(target.name + ' : ' + target.value);
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
   }
 
   return (
@@ -54,12 +64,11 @@ export default function Logear() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
-          <TextField variant="outlined" margin="normal" fullWidth id="usermail" 
-          label="Usuario o email" name="usermail" autoComplete="usermail"
-            autoFocus
+        <form className={classes.form} onSubmit={handleSubmit} noValidate>
+          <TextField onChange={handleChange} value={data.userOrEmail} helperText={textError.userOrEmail} error={isError.userOrEmail} variant="outlined" margin="normal" fullWidth id="userOrEmail" 
+          label="Usuario o email" name="userOrEmail" autoComplete="userOrEmail"
           />
-          <TextField value={data.pass} onChange={handleChange} helperText={textError.pass}
+          <TextField onChange={handleChange} value={data.pass} helperText={textError.pass}
             error={isError.pass} type={passShow ? "text" : "password"} variant="outlined"
             margin="normal" id="pass" label="Contraseña" name="pass" autoComplete="pass" size='small' fullWidth
             InputProps={{

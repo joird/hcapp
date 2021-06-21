@@ -62,7 +62,7 @@ export default function UsuarioRegistrar({ setUpdate }) {
   const classes = useStyles();
   /* const [actualizar, setActualizar] = useState(true); */
   const [passShow, setPassShow] = useState(false);
-  const validEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+  const validEmail = new RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 
   const handleSubmit = async (e) => {
     e.preventDefault();    
@@ -221,7 +221,6 @@ export default function UsuarioRegistrar({ setUpdate }) {
   const handleChange = ({ target }) => {
     setData(data => ({ ...data, [target.name]: target.value.replace(/\s\s+/g, ' ') }));
     //console.log(target.name + ' : ' + target.value);
-
   }
 
   const handleChangeFecha = ({ target }) => {
@@ -270,7 +269,7 @@ export default function UsuarioRegistrar({ setUpdate }) {
                       </InputAdornment>
                     ),
                   }}
-                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
+                  className={isError.apellido ? classes.textInput2 : classes.textInput} />
               </Grid>
               <Grid item xs={12}>
                 <TextField value={data.usuario} onChange={handleChange} helperText={textError.usuario}
@@ -283,7 +282,7 @@ export default function UsuarioRegistrar({ setUpdate }) {
                       </InputAdornment>
                     ),
                   }}
-                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
+                  className={isError.usuario ? classes.textInput2 : classes.textInput} />
               </Grid>
               <Grid item xs={12}>
                 <TextField value={data.email} onChange={handleChange} helperText={textError.email}
@@ -296,7 +295,7 @@ export default function UsuarioRegistrar({ setUpdate }) {
                       </InputAdornment>
                     ),
                   }}
-                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
+                  className={isError.email ? classes.textInput2 : classes.textInput} />
               </Grid>
               <Grid item xs={12}>
                 <TextField value={data.pass} onChange={handleChange} helperText={textError.pass}
@@ -311,7 +310,7 @@ export default function UsuarioRegistrar({ setUpdate }) {
                       </InputAdornment>
                     )
                   }}
-                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
+                  className={isError.pass ? classes.textInput2 : classes.textInput} />
               </Grid>
               <Grid item xs={6}>
                 <TextField value={data.dni} onChange={handleChange} helperText={textError.dni}
@@ -324,7 +323,7 @@ export default function UsuarioRegistrar({ setUpdate }) {
                       </InputAdornment>
                     ),
                   }}
-                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
+                  className={isError.dni ? classes.textInput2 : classes.textInput} />
               </Grid>
               <Grid item xs={6}>
                 <TextField InputProps={{ inputProps: { min: fechaMin, max: fechaMax, className: isError.fechaNacimiento ? classes.rojo : null } }} InputLabelProps={{ shrink: true }}
@@ -332,7 +331,7 @@ export default function UsuarioRegistrar({ setUpdate }) {
                   error={isError.fechaNacimiento} type="date" variant="outlined" margin="normal"
                   id="fechaNacimiento" label="Fecha de Nacimiento" name="fechaNacimiento"
                   autoComplete="fechaNacimiento" size='small' fullWidth
-                  className={isError.nombre ? classes.textInput2 : classes.textInput} />
+                  className={isError.fechaNacimiento ? classes.textInput2 : classes.textInput} />
               </Grid>
               <Grid container direction="column" justify="center" alignItems="center">
                 <Typography className={classes.textError}>{formError}</Typography>

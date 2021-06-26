@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Logear from '../component/forms/Logear';
+//import UserContext from '../context/user/UserContext';
+import NavBarIndex from '../component/navbars/NavbarIndex';
 
-export default function Login(props) {
+export default function Login() {
+  //const { setUser, user } = useContext(UserContext);
+
   const asd = (datos) => {
     console.log('Imprimiendo desde el componente padre Login');
     console.log(datos);
@@ -22,6 +26,7 @@ export default function Login(props) {
   }
   return (
     <>
+      <NavBarIndex />
       <Logear />
     </>
 

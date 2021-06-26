@@ -7,13 +7,17 @@ const UserState = (props) => {
     user: {},
     time: 0
   }
+
   const [state, dispatch] = useReducer(UserReducer, initialState);
 
-  const setUser = (user) => {
+  const setUser = (user) => {    
     dispatch({
       type: 'SET_USER',
       payload: user
     })
+  }
+  const blabla = () => {
+    console.log(state);
   }
 
   return (
@@ -21,6 +25,7 @@ const UserState = (props) => {
       user: state.user,
       time: state.time,
       setUser,
+      blabla,
     }}>
       {props.children}
     </UserContext.Provider>

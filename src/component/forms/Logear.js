@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import {IconButton, InputAdornment, Container, makeStyles, Typography, Avatar, Button, TextField, CssBaseline} from '@material-ui/core';
-import {LockOutlined, Visibility, VisibilityOff} from '@material-ui/icons';
+import { IconButton, InputAdornment, Container, makeStyles, Typography, Avatar, Button, TextField, CssBaseline } from '@material-ui/core';
+import { LockOutlined, Visibility, VisibilityOff } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.secondary.main,
   },
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: '100%',
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -30,10 +30,15 @@ const useStyles = makeStyles((theme) => ({
   textInput2: {
     margin: theme.spacing(0, 0, 0, 0),
   },
+  textError: {
+    color: '#e53935',
+    fontSize: '14px',
+  },
 }));
 
 export default function Logear() {
   const classes = useStyles();
+
   const [data, setData] = useState({
     userOrEmail: '', pass: ''
   });
@@ -43,15 +48,70 @@ export default function Logear() {
   const [textError, setTextError] = useState({
     userOrEmail: '', pass: ''
   });
+
+  const [formError, setFormError] = useState('');
+
   const [passShow, setPassShow] = useState(false);
+
+  const validEmail = new RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+
+  const url = 'http://localhost:4000/api/v1/login';
 
   const handleChange = ({ target }) => {
     setData(data => ({ ...data, [target.name]: target.value.replace(/\s\s+/g, ' ') }));
     //console.log(target.name + ' : ' + target.value);
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (validar()) {
+      const datos = {
+        data: {
+          [validEmail.test(data.userOrEmail) ? 'email' : 'usuario']: data.userOrEmail,
+          pass: data.pass
+        }
+      }
+      console.log(datos);
+      await fetch(url,
+        {
+          method: 'POST',
+          body: JSON.stringify(datos),
+          headers: {
+            "Content-type": "application/json"
+          }
+        })
+        .then(async res => {
+          const respuesta = await res.json();
+          if(respuesta.usuario){
+            console.log(respuesta.usuario);
+          } else if(res.status === 403) {
+            setFormError(respuesta.message)
+          }
+        })
+        .catch(console.log("ERROR"));
+    } else {
+
+    }
+  }
+
+  const validar = () => {
+    let error = 0;
+    setError(isError => ({ ...isError, userOrEmail: false, pass: false }));
+    setTextError(textError => ({ ...textError, userOrEmail: '', pass: '' }))
+    setFormError('');
+    if (data.userOrEmail.length === 0) {
+      error++;
+      setError(isError => ({ ...isError, userOrEmail: true }));
+      setTextError(textError => ({ ...textError, userOrEmail: 'Usuario o email necesario.' }))
+    }
+
+    if (data.pass.length === 0) {
+      error++;
+      setError(isError => ({ ...isError, pass: true }));
+      setTextError(textError => ({ ...textError, pass: 'Contraseña necesaria.' }))
+    }
+
+    return error === 0;
   }
 
   return (
@@ -65,12 +125,12 @@ export default function Logear() {
           Sign in
         </Typography>
         <form className={classes.form} onSubmit={handleSubmit} noValidate>
-          <TextField onChange={handleChange} value={data.userOrEmail} helperText={textError.userOrEmail} error={isError.userOrEmail} variant="outlined" margin="normal" fullWidth id="userOrEmail" 
-          label="Usuario o email" name="userOrEmail" autoComplete="userOrEmail"
+          <TextField onChange={handleChange} value={data.userOrEmail} helperText={textError.userOrEmail} error={isError.userOrEmail} variant="outlined" margin="normal" fullWidth id="userOrEmail"
+            label="Usuario o email" name="userOrEmail" autoComplete="userOrEmail"
           />
           <TextField onChange={handleChange} value={data.pass} helperText={textError.pass}
             error={isError.pass} type={passShow ? "text" : "password"} variant="outlined"
-            margin="normal" id="pass" label="Contraseña" name="pass" autoComplete="pass" size='small' fullWidth
+            margin="normal" id="pass" label="Contraseña" name="pass" autoComplete="pass" fullWidth
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -81,6 +141,9 @@ export default function Logear() {
               )
             }}
             className={isError.pass ? classes.textInput2 : classes.textInput} />
+          <Typography className={classes.textError}>
+            {formError}
+          </Typography>
           <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
             Sign In
           </Button>

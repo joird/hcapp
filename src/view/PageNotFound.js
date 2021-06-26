@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function Pruebas() {
+export default function PageNotFound() {
   return (
     <div>
-      
+      404 Not Found
     </div>
   )
 }

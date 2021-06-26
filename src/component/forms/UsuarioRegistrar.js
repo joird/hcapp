@@ -99,7 +99,6 @@ export default function UsuarioRegistrar({ setUpdate }) {
     }
   }
 
-
   const validar = () => {
     let { nombre, apellido, usuario, email, pass, dni, fechaNacimiento } = data;
     setError(isError => ({ ...isError, nombre: false, apellido: false, usuario: false, email: false, pass: false, dni: false, fechaNacimiento: false }));

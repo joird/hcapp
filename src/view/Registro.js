@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import UsuarioRegistrar from '../component/forms/UsuarioRegistrar';
-
+import NavBarIndex from '../component/navbars/NavbarIndex';
 export default function Registro(props) {
   const [user, setUser] = useState();
 
@@ -27,6 +27,9 @@ export default function Registro(props) {
   };
 
   return (
-    <UsuarioRegistrar />
+    <>
+      <NavBarIndex />
+      <UsuarioRegistrar />
+    </>
   )
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -8,27 +8,24 @@ import FreeBreakfastIcon from '@material-ui/icons/FreeBreakfast';
 import { Link } from 'react-router-dom';
 import LinkUi from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
+import UserContext from '../../context/user/UserContext';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
+
   menuButton: {
     marginRight: theme.spacing(2),
   },
   title: {
     flexGrow: 1,
-    display: 'none',
-    [theme.breakpoints.up('sm')]: {
-      display: 'block',
-    },
   },
   blanco: {
+    textDecoration: 'none',
     color: 'white',
   },
 }));
 
 export default function NavBarIndex() {
+  const { isLogin } = useContext(UserContext);
   const classes = useStyles();
 
   return (
@@ -46,17 +43,23 @@ export default function NavBarIndex() {
           <Typography className={classes.title} variant="h6" noWrap>
             Hover Catering
           </Typography>
-
-          <Typography className={classes.root}>
-            <Link to='/login'>Login</Link>
-          </Typography>
-          <Typography className={classes.root}>
-            <Link to='/registro'>Registro</Link>
-          </Typography>
-          <Button className={classes.blanco}><Link to='/registro'>Registro</Link></Button>
-
+          {isLogin ?
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="open drawer"
+            >
+              <FreeBreakfastIcon ><Link to='/' /></FreeBreakfastIcon>
+            </IconButton>
+            :
+            <>
+              <Button ><Link className={classes.blanco} to='/login'>Login</Link></Button>
+              <Button ><Link className={classes.blanco} to='/registro'>Registro</Link></Button>
+            </>
+          }
         </Toolbar>
-      </AppBar>
-    </div>
+      </AppBar >
+    </div >
   );
 }

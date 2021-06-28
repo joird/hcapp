@@ -1,7 +1,7 @@
 import Registro from './view/Registro';
 import Login from './view/Login';
 import Rol from './view/Rol';
-import Index from './view/index';
+import Index from './view/Index';
 import PageNotFound from './view/PageNotFound';
 
 const routesPublic = [

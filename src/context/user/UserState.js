@@ -5,6 +5,7 @@ import UserContext from './UserContext';
 const UserState = (props) => {
   const initialState = {
     user: {},
+    isLogin: true,
     time: 0
   }
 
@@ -16,16 +17,14 @@ const UserState = (props) => {
       payload: user
     })
   }
-  const blabla = () => {
-    console.log(state);
-  }
+
 
   return (
     <UserContext.Provider value={{
       user: state.user,
+      isLogin: state.isLogin,
       time: state.time,
       setUser,
-      blabla,
     }}>
       {props.children}
     </UserContext.Provider>

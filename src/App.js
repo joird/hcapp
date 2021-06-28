@@ -1,18 +1,27 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import Login from './view/Login';
 import UserContext from './context/user/UserContext';
+import {routesPublic, routesAuth} from './Rutas';
 
 export default function App() {
-  const {user, setUser} = useContext(UserContext);
+  const {user, setUser, isLogin} = useContext(UserContext);
+  const [rutas, setRutas] = useState(routesPublic);
   useEffect(() => {
-    console.log(user);
-  }, [])
+    setRutas(isLogin ? routesAuth : routesPublic);
+  }, [isLogin])
+
   return (
     
       <BrowserRouter>
         <Switch>
-          <Route path="/" exact component={Login} />
+         {/*  <Route path="/" exact component={Login} /> */}
+         {rutas.map((route) => (
+          <Route
+            key={route.path}
+            path={route.path}
+            component={route.component}
+          />
+        ))}
         </Switch>
       </BrowserRouter>
     
